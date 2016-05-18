@@ -92,19 +92,11 @@
   _.reject = function(collection, test) {
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
-  
 
-    var results = [];
-    _.each(collection, function(item, index){
-      if (!test(item)){
-        results.push(item);
-      }
+    return _.filter(collection, function(item){
+      var output = test(item);
+      return !output;
     });
-    return results;
-
-    // Want to put the inverse of the test but not sure how
-    // something like
-    //_.filter(collection, !test);
 
   };
 
