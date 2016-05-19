@@ -435,7 +435,70 @@ _.reduce = function(collection, iterator, accumulator) {
   // _.memoize should return a function that, when called, will check if it has
   // already computed the result for the given argument and return that value
   // instead if possible.
+
+
   _.memoize = function(func) {
+    var args;
+    var alreadyCalledWithParams = false;
+    var result;
+
+    return function(){
+      //Function will run once, setting args array to current arguments
+      //need to check if new arguments equal old arguments 
+
+      if(args !== undefined){ 
+
+        console.log('Args in parameter check: ' + args + ' Length: ' + args.length);
+        var tempNewArgs = Array.prototype.slice.call(arguments);
+        // Need to check if items are primitive or a reference(array)
+        var argsHasArray = false;
+        _.each(tempNewArgs, function(item){
+          if (Object.prototype.toString.call(item) === '[object Array]'){
+            argsHasArray = true;
+          }
+        });
+       console.log('argsHasArray: ' + argsHasArray);
+
+       //If argument is array, check array for same arguments as prev
+       // check all inputs
+       if (argsHasArray){
+        _.each(tempNewArgs, function(item, index){
+          _.each(item, function(item, index2){
+            console.log('item: ' + item + ' args[index]: ' + args[index][index2]);
+            if(item !== args[index]){
+              alreadyCalledWithParams = false;
+            }
+            if(i === tempNewArgs.length){
+              alreadyCalledWithParams = false;
+            }
+          });
+        });   
+      }
+        //Check to see if the arguments are the same as previous arguments (if primitive)
+       else{ 
+          for (var i = 0; i<args.length;i++){
+             if(args[i] !== tempNewArgs[i]){
+               alreadyCalledWithParams = false;
+             }
+             if(i === args.length){
+               alreadyCalledWithParams = false;
+             }
+          } 
+      }
+    }  
+      //If arguments are not the same as prev arguments, run new function with new args
+      if(!alreadyCalledWithParams){
+        var j = 0;
+        //Store arguments of current function in closure scope variables
+        args = [];
+        args = Array.prototype.slice.call(arguments);
+        console.log('Args in function set: ' + args + ' Length: ' + args.length);
+        result = func.apply(this, arguments);
+        alreadyCalledWithParams = true;
+      }
+      return result;
+    };
+
   };
 
   // Delays a function for the given number of milliseconds, and then calls
