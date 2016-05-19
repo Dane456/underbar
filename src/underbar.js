@@ -182,7 +182,8 @@ _.reduce = function(collection, iterator, accumulator) {
     //If no starting condition and isArray
     if (accumulator === undefined ){
       noMemo = true;
-    } else{
+    } 
+    else{
       locAcc = accumulator;
     }
 
@@ -191,37 +192,47 @@ _.reduce = function(collection, iterator, accumulator) {
       if (collection.length === 0){
         return true;
       }
-      if (accumulator === undefined){
-        locAcc = collection[0];
-      }
+
+      //Conditions: 1) No starting point(accumulator/noMemo)
+      //            2) No iterator function e.g. _.every([2,4,6]), _.every([true,false,true])
+
+      // Possibilities, 1&2, just 1, just 2, neither 1 or 2
+
+      //Examples: 1&2) _.reduce([2,4,6])
+      //          1not2) _.reduce([2,4,6], isEven)
+      //          2not1)_.reduce([2,4,6], , 0);
+      //          not2not1) ._reduce([2,4,6], function(memo, num){return memo+num}, 10)
+
 
       for(i=0; i<collection.length; i++){
         //If any of the values would trigger a false, return false immediately
         if (collection[i] === false || collection[i] === null || collection[i] === undefined){
           return false;
         }
-        //If starting value is undefined, set it to the first value in the array
-        else if (noMemo){
+        // C1) If starting value is undefined, set it to the first value in the array
+        if (noMemo && arguments[1] === undefined){
           noMemo = false;
           locAcc = collection[i];
         }
-        //If there's no iterator function, set the local accumulator to the value in the array
-        // e.g. _.every([2,4,6])
+        // C2) no starting point, has iterator function
+        else if (noMemo && arguments[1] !== undefined){
+            noMemo = false;
+            locAcc = collection[i];
+            i++;
+            locAcc = iterator(locAcc, collection[i]);
+        }
+        // C3
         else if (arguments[1] === undefined){
             locAcc = collection[i]; 
         }
-        //Otherwise run as normal
-        else {
+        else if (arguments[1] !== undefined && !noMemo) {
+          //locAcc = accumulator;
           locAcc = iterator(locAcc, collection[i]);
         }
         //NEed to test if there's noMemo and if there's no iterator function
     
       }
     } else if (typeof collection === 'object'){
-
-      if (accumulator === undefined){
-        locAcc = collection[Object.keys(collection)[0]];
-      }
 
       for(var prop in collection){
         if (collection[prop] === false || collection[prop] === null || collection[prop] === undefined)  {
@@ -231,7 +242,7 @@ _.reduce = function(collection, iterator, accumulator) {
           noMemo = false;
           locAcc = collection[prop];
         } 
-        if (arguments[1] === undefined){
+        else if (arguments[1] === undefined){
           locAcc = collection[prop];
         } else{
           locAcc = iterator(locAcc, collection[prop]);
@@ -240,19 +251,6 @@ _.reduce = function(collection, iterator, accumulator) {
     }
 
     return locAcc;
-
-  };
-
-    _.every2 = function(collection, iterator) {
-    // TIP: Try re-using reduce() here.
-    var potAnswers;
-    potAnswers = _.reduce(collection, iterator);
-    if (potAnswers === null){
-      return false;
-    } else{
-      return potAnswers;
-    }
-
 
   };
 
@@ -272,15 +270,32 @@ _.reduce = function(collection, iterator, accumulator) {
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
   // TIP: Try re-using reduce() here.
-  var potAnswers;
-  potAnswers = Boolean(_.reduce(collection, iterator));
-  if (potAnswers === null){
-    return false;
-  } else{
-    return potAnswers;
-  }
+    var i;
+    
+    for (i=0;i<collection.length;i++){
+      if (collection[i] === false || collection[i] === null || collection[i] === undefined){
+        return false;
+      }
+      if (iterator !== undefined){
+        if (!iterator(collection[i])){
+          return false;
+        }
+      }
+    }
 
-  };
+  return true;
+
+  //Attempt at using reduce(), was egregiously unsuccessful 
+  //   var potAnswer;
+  //   potAnswer = Boolean(_.reduce(collection, iterator));
+  //   if (potAnswers === null){
+  //     return false;
+  //   } else{
+  //     return potAnswers;
+  //   }
+
+  // };
+};
 
 
   // Determine whether any of the elements pass a truth test. If no iterator is
