@@ -462,13 +462,15 @@ _.reduce = function(collection, iterator, accumulator) {
        //If argument is array, check array for same arguments as prev
        // check all inputs
        if (argsHasArray){
+        //First array in arguments
         _.each(tempNewArgs, function(item, index){
-          _.each(item, function(item, index2){
-            console.log('item: ' + item + ' args[index]: ' + args[index][index2]);
-            if(item !== args[index]){
+          //First number in first array in arguments
+          _.each(item, function(item2, index2){
+            //console.log('item2: ' + item2 + ' args[index]: ' + args[index][index2]);
+            if(item2 !== args[index][index2]){
               alreadyCalledWithParams = false;
             }
-            if(i === tempNewArgs.length){
+            if(i === item.length){
               alreadyCalledWithParams = false;
             }
           });
