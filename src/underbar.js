@@ -172,20 +172,27 @@
   //     return total + number * number;
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
-  _.reduce = function(collection, iterator, accumulator) {
+_.reduce = function(collection, iterator, accumulator) {
     var locAcc;
     var noMemo = false;
     var i;
     var isArray = Array.isArray(collection);
     var firstVal = '';
+
+    //Checking initial conditions for edge cases
     if (accumulator === undefined && isArray){
-      if (collection.length === 1) {
+      if (collection.length === 1 || collection[0] === false) {
         return collection[0];
+      } else if (collection.length === 0){
+        return true;
       }
       locAcc = collection[0];
       noMemo = true;
     } else if (accumulator === undefined && typeof collection === 'object'){
       firstVal = collection[Object.keys(collection)[0]];
+      // if (firstVal === false){
+      //   return firstVal;
+      // }
       locAcc = firstVal;
       noMemo = true;
     }
@@ -200,6 +207,9 @@
           noMemo = false;
           i++;
         }
+        if (collection[i] === false || collection[i] === null || collection[i] === undefined){
+          return false;
+        }
         locAcc = iterator(locAcc, collection[i]); 
       }
     } else if (typeof collection === 'object'){
@@ -207,7 +217,9 @@
         if (noMemo){
           noMemo = false;
         }
-        else {
+        else if (collection[prop] === false || collection[prop] === null || collection[prop] === undefined)  {
+          return false;
+        } else{
           locAcc = iterator(locAcc, collection[prop]);
         }
       }
@@ -232,8 +244,17 @@
 
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
-    // TIP: Try re-using reduce() here.
+  // TIP: Try re-using reduce() here.
+  var potAnswers;
+  potAnswers = Boolean(_.reduce(collection, iterator));
+  if (potAnswers === null){
+    return false;
+  } else{
+    return potAnswers;
+  }
+
   };
+
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
