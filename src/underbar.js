@@ -199,8 +199,8 @@ _.reduce = function(collection, iterator, accumulator) {
       // Possibilities, 1&2, just 1, just 2, neither 1 or 2
 
       //Examples: 1&2) _.reduce([2,4,6])
-      //          1not2) _.reduce([2,4,6], isEven)
-      //          2not1)_.reduce([2,4,6], , 0);
+      //          1) _.reduce([2,4,6], isEven)
+      //          2)_.reduce([2,4,6], , 0);
       //          not2not1) ._reduce([2,4,6], function(memo, num){return memo+num}, 10)
 
 
@@ -215,7 +215,7 @@ _.reduce = function(collection, iterator, accumulator) {
           locAcc = collection[i];
         }
         // C2) no starting point, has iterator function
-        else if (noMemo && arguments[1] !== undefined){
+        else if (noMemo){
             noMemo = false;
             locAcc = collection[i];
             i++;
@@ -225,11 +225,9 @@ _.reduce = function(collection, iterator, accumulator) {
         else if (arguments[1] === undefined){
             locAcc = collection[i]; 
         }
-        else if (arguments[1] !== undefined && !noMemo) {
-          //locAcc = accumulator;
+        else {
           locAcc = iterator(locAcc, collection[i]);
         }
-        //NEed to test if there's noMemo and if there's no iterator function
     
       }
     } else if (typeof collection === 'object'){
@@ -270,38 +268,73 @@ _.reduce = function(collection, iterator, accumulator) {
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
   // TIP: Try re-using reduce() here.
-    var i;
-    
-    for (i=0;i<collection.length;i++){
-      if (collection[i] === false || collection[i] === null || collection[i] === undefined){
-        return false;
-      }
-      if (iterator !== undefined){
-        if (!iterator(collection[i])){
-          return false;
-        }
-      }
-    }
+   
+    return _.reduce(collection, function(wasFound, item){
+            if(iterator !== undefined){
 
-  return true;
-
-  //Attempt at using reduce(), was egregiously unsuccessful 
-  //   var potAnswer;
-  //   potAnswer = Boolean(_.reduce(collection, iterator));
-  //   if (potAnswers === null){
-  //     return false;
-  //   } else{
-  //     return potAnswers;
-  //   }
-
-  // };
+              if(typeof(wasFound) === 'boolean'){
+                if (!wasFound){
+                  return false;
+                }
+                if(iterator(item)){
+                  return true;
+                }
+              }
+              else if(Boolean(iterator(wasFound)) && Boolean(iterator(item))){
+                return true;
+              }
+              else if(collection.length === 1 && Boolean(iterator(wasFound))){
+                return true;
+              }
+              else {
+                return false;
+              }
+            }
+            else if(wasFound){
+              return true;
+            }
+            return false;
+           });
 };
+    // var i;
+  
+    // for (i=0;i<collection.length;i++){
+    //   if (collection[i] === false || collection[i] === null || collection[i] === undefined){
+    //     return false;
+    //   }
+    //   if (iterator !== undefined){
+    //     if (!iterator(collection[i])){
+    //       return false;
+    //     }
+    //   }
+    // }
+
+  // return true;
+
 
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
+
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    var i;
+      if (collection.length === 0 ){
+        return false;
+      }
+
+      for (i=0;i<collection.length;i++){
+        if (collection[i] === true || collection[i] === 'yes'){
+          return true;
+        }
+        else if(arguments[1] !== undefined){
+          if(iterator(collection[i])){
+            return true;
+          }
+        }
+      }
+
+     return false;
   };
 
 
