@@ -177,48 +177,62 @@ _.reduce = function(collection, iterator, accumulator) {
     var noMemo = false;
     var i;
     var isArray = Array.isArray(collection);
-    var firstVal = '';
 
-    //Checking initial conditions for edge cases
-    if (accumulator === undefined && isArray){
-      if (collection.length === 1 || collection[0] === false) {
-        return collection[0];
-      } else if (collection.length === 0){
-        return true;
-      }
-      locAcc = collection[0];
+    //Checking initial conditions
+    //If no starting condition and isArray
+    if (accumulator === undefined ){
       noMemo = true;
-    } else if (accumulator === undefined && typeof collection === 'object'){
-      firstVal = collection[Object.keys(collection)[0]];
-      // if (firstVal === false){
-      //   return firstVal;
-      // }
-      locAcc = firstVal;
-      noMemo = true;
-    }
-    else{
+    } else{
       locAcc = accumulator;
     }
 
-
     if (isArray){
-        for(i=0; i<collection.length; i++){
-        if (noMemo){
-          noMemo = false;
-          i++;
-        }
+
+      if (collection.length === 0){
+        return true;
+      }
+      if (accumulator === undefined){
+        locAcc = collection[0];
+      }
+
+      for(i=0; i<collection.length; i++){
+        //If any of the values would trigger a false, return false immediately
         if (collection[i] === false || collection[i] === null || collection[i] === undefined){
           return false;
         }
-        locAcc = iterator(locAcc, collection[i]); 
+        //If starting value is undefined, set it to the first value in the array
+        else if (noMemo){
+          noMemo = false;
+          locAcc = collection[i];
+        }
+        //If there's no iterator function, set the local accumulator to the value in the array
+        // e.g. _.every([2,4,6])
+        else if (arguments[1] === undefined){
+            locAcc = collection[i]; 
+        }
+        //Otherwise run as normal
+        else {
+          locAcc = iterator(locAcc, collection[i]);
+        }
+        //NEed to test if there's noMemo and if there's no iterator function
+    
       }
     } else if (typeof collection === 'object'){
+
+      if (accumulator === undefined){
+        locAcc = collection[Object.keys(collection)[0]];
+      }
+
       for(var prop in collection){
+        if (collection[prop] === false || collection[prop] === null || collection[prop] === undefined)  {
+          return false;
+        }
         if (noMemo){
           noMemo = false;
-        }
-        else if (collection[prop] === false || collection[prop] === null || collection[prop] === undefined)  {
-          return false;
+          locAcc = collection[prop];
+        } 
+        if (arguments[1] === undefined){
+          locAcc = collection[prop];
         } else{
           locAcc = iterator(locAcc, collection[prop]);
         }
@@ -226,6 +240,19 @@ _.reduce = function(collection, iterator, accumulator) {
     }
 
     return locAcc;
+
+  };
+
+    _.every2 = function(collection, iterator) {
+    // TIP: Try re-using reduce() here.
+    var potAnswers;
+    potAnswers = _.reduce(collection, iterator);
+    if (potAnswers === null){
+      return false;
+    } else{
+      return potAnswers;
+    }
+
 
   };
 
