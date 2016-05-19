@@ -510,7 +510,7 @@ _.reduce = function(collection, iterator, accumulator) {
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
-    console.log('arguments: ' + arguments);
+    //TODO: allow variable amount of arguments
     setTimeout(func, wait, arguments[2], arguments[3]);
   };
 
@@ -525,7 +525,22 @@ _.reduce = function(collection, iterator, accumulator) {
   // TIP: This function's test suite will ask that you not modify the original
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
-  _.shuffle = function(array) {
+  _.shuffle= function(array) {
+    var refArray = array.slice();
+    var i = array.length;
+    var j = 0;
+    var temp;
+
+    while(i--){
+      //Finds a number 0 through the length of the array, 
+      //decreasing the scope one from the end with every iteration
+      j = Math.floor(Math.random() * (i+1));
+       //swaps the value with the randomized index with the last index
+      temp = refArray[i];
+      refArray[i] = refArray[j];
+      refArray[j] = temp;
+    }
+    return refArray;
   };
 
 
