@@ -383,6 +383,16 @@ _.reduce = function(collection, iterator, accumulator) {
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    var i = 1;
+      while(arguments[i] !== undefined){
+        for(var prop in arguments[i]){
+          if (!obj[prop] && obj[prop] !== '' && obj[prop] !== 0 && obj[prop] === undefined){
+              obj[prop] = arguments[i][prop]; 
+          }   
+        }
+      i++;
+      }
+    return obj;
   };
 
 
