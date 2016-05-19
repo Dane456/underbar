@@ -176,23 +176,41 @@
     var locAcc;
     var noMemo = false;
     var i;
-    if (accumulator === undefined){
+    var isArray = Array.isArray(collection);
+    var firstVal = '';
+    if (accumulator === undefined && isArray){
       if (collection.length === 1) {
         return collection[0];
       }
       locAcc = collection[0];
       noMemo = true;
-    } else{
+    } else if (accumulator === undefined && typeof collection === 'object'){
+      firstVal = collection[Object.keys(collection)[0]];
+      locAcc = firstVal;
+      noMemo = true;
+    }
+    else{
       locAcc = accumulator;
     }
 
 
-    for(i=0; i<collection.length; i++){
-      if (noMemo){
-        noMemo = false;
-        i++;
+    if (isArray){
+        for(i=0; i<collection.length; i++){
+        if (noMemo){
+          noMemo = false;
+          i++;
+        }
+        locAcc = iterator(locAcc, collection[i]); 
       }
-      locAcc = iterator(locAcc, collection[i]); 
+    } else if (typeof collection === 'object'){
+      for(var prop in collection){
+        if (noMemo){
+          noMemo = false;
+        }
+        else {
+          locAcc = iterator(locAcc, collection[prop]);
+        }
+      }
     }
 
     return locAcc;
