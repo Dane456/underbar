@@ -296,21 +296,6 @@ _.reduce = function(collection, iterator, accumulator) {
             return false;
            });
 };
-    // var i;
-  
-    // for (i=0;i<collection.length;i++){
-    //   if (collection[i] === false || collection[i] === null || collection[i] === undefined){
-    //     return false;
-    //   }
-    //   if (iterator !== undefined){
-    //     if (!iterator(collection[i])){
-    //       return false;
-    //     }
-    //   }
-    // }
-
-  // return true;
-
 
 
   // Determine whether any of the elements pass a truth test. If no iterator is
@@ -318,6 +303,33 @@ _.reduce = function(collection, iterator, accumulator) {
 
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+
+  // var oneExists = false;
+  // if (collection.length === 0){
+  //       return false;
+  // }
+
+  //problem, since every checks every single object in collection, a single true 
+  // will not break out of the function
+  //solution: break the function if a single true is found
+
+  //   _.every(collection, function(memo, item){
+  //     if(typeof(memo) === 'boolean' && memo){
+  //       oneExists = true;
+  //       //only returns out of current iteration, not entire function
+  //       return;
+  //     }
+  //     if(iterator !== undefined){
+  //       if (iterator(memo)){
+  //         return true;
+  //       }
+  //       return false;
+  //     }
+  //   });
+
+  //   return oneExists;
+  // };
+
     var i;
       if (collection.length === 0 ){
         return false;
@@ -335,6 +347,7 @@ _.reduce = function(collection, iterator, accumulator) {
       }
 
      return false;
+
   };
 
 
@@ -357,6 +370,14 @@ _.reduce = function(collection, iterator, accumulator) {
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    var i = 1;
+      while(arguments[i] !== undefined){
+        for(var prop in arguments[i]){
+          obj[prop] = arguments[i][prop];
+        }
+      i++;
+      }
+    return obj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
