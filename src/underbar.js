@@ -555,6 +555,7 @@ _.reduce = function(collection, iterator, accumulator) {
   // Calls the method named by functionOrKey on each value in the list.
   // Note: You will need to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args) {
+
   };
 
   // Sort the object's values by a criterion produced by an iterator.
@@ -570,7 +571,33 @@ _.reduce = function(collection, iterator, accumulator) {
   // Example:
   // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
   _.zip = function() {
+
+    var results = [];
+
+    var args = Array.prototype.slice.call(arguments);
+    var longestArray = 0;
+
+    for(var k =0;k<args.length;k++){
+      if(args[k].length>longestArray){
+        longestArray = args[k].length;
+      }
+    }
+
+    // });
+    //argument list
+    //[i=0 j=0, i=1 j=0, i=2 j=0]
+    //[i=0 j=1, i=1 j=1, i=2 j=1]
+
+    for(var j=0;j<longestArray;j++){
+      //items in each argument
+      results.push([]);
+      for(var i=0;i<args.length;i++){
+        results[j].push(args[i][j]);
+      }
+    }
+    return results;
   };
+
 
   // Takes a multidimensional array and converts it to a one-dimensional array.
   // The new array should contain all elements of the multidimensional array.
