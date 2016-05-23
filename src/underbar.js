@@ -268,36 +268,36 @@ _.reduce = function(collection, iterator, accumulator) {
     if (collection.length === 0){
       return true;
     }
-      
-    return _.reduce(collection, function(wasFound, item){
-            if(iterator !== undefined){
 
-              if(typeof(wasFound) === 'boolean'){
-                if (!wasFound){
-                  return false;
-                }
-                if(iterator(item)){
-                  return true;
-                }
-              }
-              else if(Boolean(iterator(wasFound)) && Boolean(iterator(item))){
-                return true;
-              }
-              else if(collection.length === 1 && Boolean(iterator(wasFound))){
-                return true;
-              }
-              else if(collection.length === 0){
-                return true;
-              }
-              else {
-                return false;
-              }
-            }
-            else if(wasFound){
-              return true;
-            }
+    return _.reduce(collection, function(wasFound, item){
+      if(iterator !== undefined){
+
+        if(typeof(wasFound) === 'boolean'){
+          if (!wasFound){
             return false;
-           });
+          }
+          if(iterator(item)){
+            return true;
+          }
+        }
+        else if(Boolean(iterator(wasFound)) && Boolean(iterator(item))){
+          return true;
+        }
+        else if(collection.length === 1 && Boolean(iterator(wasFound))){
+          return true;
+        }
+        else if(collection.length === 0){
+          return true;
+        }
+        else {
+          return false;
+        }
+      }
+      else if(wasFound){
+        return true;
+      }
+      return false;
+     });
   };
 
 
@@ -565,7 +565,7 @@ _.reduce = function(collection, iterator, accumulator) {
   // If iterator is a string, sort objects by that property with the name
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
-   _.sortBy = function(collection, iterator) {
+  _.sortBy = function(collection, iterator) {
     var temp = [];
     var results = [];
 
@@ -573,6 +573,12 @@ _.reduce = function(collection, iterator, accumulator) {
       return Object.prototype.toString.call(input).slice(8,-1);
     };
 
+    var doesContain = function(collection,ref){
+      if(_.contains(collection, ref)){
+        return true;
+      }
+      return false;
+    };
  //   if (Array.isArray(collection)) {
 
     _.each(collection,function(item){
@@ -585,28 +591,44 @@ _.reduce = function(collection, iterator, accumulator) {
     });
 
     temp.sort();
-  
+    //If the original collection is an object or string
      if(type(collection[0]) === 'Object' || type(collection[0]) === "String"){
-      _.each(temp,function(item,index){
+      //Referencing our temp made array, check the original collection for the key/
+      //value pairs and insert into results accordingly
+      _.each(temp,function(itemInTemp,index){
+       
         if(iterator === 'length'){
           for(var i = 0;i<collection.length;i++){
-            if(collection[i].length === item){
-              var doesContain = _.contains(results, collection[i]);
-              if(!doesContain){
+            if(collection[i].length === itemInTemp){
+              if(!doesContain(results, collection[i])){
                 results.push(collection[i]);
               break;
               }
             }
           }
         }
+
         else{
-          _.each(collection,function(obj){
-            for (var prop in obj){
-              if(obj[prop] === item){
-                results.push(obj);
+          for(var j = 0;j<collection.length;j++){
+            var resultPushed = false;
+            for (var prop in collection[j]){
+              if(collection[j][prop] === itemInTemp){
+                //problem is itemInTemp needs to progress after the result is pusshed
+                if(!doesContain(results, collection[j])){
+                  results.push(collection[j]);
+                  resultPushed = true;
+                  //increment the each loop
+                  break;
+                }
+              }  
+              if(resultPushed){
+                break;
               }
             }
-          });
+            if(resultPushed){
+                break;
+            }            
+          }
         }
       });
      }
