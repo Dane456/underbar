@@ -451,7 +451,7 @@ _.reduce = function(collection, iterator, accumulator) {
 
       if(args !== undefined){ 
 
-        console.log('Args in parameter check: ' + args + ' Length: ' + args.length);
+       // console.log('Args in parameter check: ' + args + ' Length: ' + args.length);
         var tempNewArgs = Array.prototype.slice.call(arguments);
         // Need to check if items are primitive or a reference(array)
         var argsHasArray = false;
@@ -460,7 +460,7 @@ _.reduce = function(collection, iterator, accumulator) {
             argsHasArray = true;
           }
         });
-       console.log('argsHasArray: ' + argsHasArray);
+       //console.log('argsHasArray: ' + argsHasArray);
 
        //If argument is array, check array for same arguments as prev
        // check all inputs
@@ -559,10 +559,20 @@ _.reduce = function(collection, iterator, accumulator) {
   // Note: You will need to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, arg) {
 
+    var results = [];
     var args = Array.prototype.slice.call(arguments).slice(2);
 
-    return Array.prototype[functionOrKey].call(collection);
+    if(typeof(functionOrKey) === 'function'){
+      _.each(collection,function(item){
+        results.push(functionOrKey.apply(item));
+      });
+      return results;
+    }
 
+    else if(typeof(functionOrKey) === "string"){
+      return Array.prototype[functionOrKey].call(collection);
+    }
+    
   };
 
   // Sort the object's values by a criterion produced by an iterator.
@@ -617,11 +627,9 @@ _.reduce = function(collection, iterator, accumulator) {
             var resultPushed = false;
             for (var prop in collection[j]){
               if(collection[j][prop] === itemInTemp){
-                //problem is itemInTemp needs to progress after the result is pusshed
                 if(!doesContain(results, collection[j])){
                   results.push(collection[j]);
                   resultPushed = true;
-                  //increment the each loop
                   break;
                 }
               }  
@@ -728,7 +736,7 @@ _.reduce = function(collection, iterator, accumulator) {
         result.push(prop);
       }
     }
-    console.log(truthObject);
+   // console.log(truthObject);
     return result;
   };
 
