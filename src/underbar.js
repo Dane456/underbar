@@ -494,7 +494,7 @@ _.reduce = function(collection, iterator, accumulator) {
         //Store arguments of current function in closure scope variables
         args = [];
         args = Array.prototype.slice.call(arguments);
-        console.log('Args in function set: ' + args + ' Length: ' + args.length);
+        //console.log('Args in function set: ' + args + ' Length: ' + args.length);
         result = func.apply(this, arguments);
         alreadyCalledWithParams = true;
       }
@@ -638,7 +638,18 @@ _.reduce = function(collection, iterator, accumulator) {
   // Take the difference between one array and a number of other arrays.
   // Only the elements present in just the first array will remain.
   _.difference = function(array) {
+    var args = Array.prototype.slice.call(arguments).slice(1);
+    var allArgs = _.flatten(args);
+    var result = [];
+
+    array.forEach(function(item){
+      if(!_.contains(allArgs,item))
+        result.push(item);
+    });
+
+    return result;
   };
+
 
   // Returns a function, that, when invoked, will only be triggered at most once
   // during a given window of time.  See the Underbar readme for extra details
