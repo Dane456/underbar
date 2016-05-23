@@ -570,16 +570,13 @@ _.reduce = function(collection, iterator, accumulator) {
       return Object.prototype.toString.call(input).slice(8,-1);
     };
 
-    if(Object.prototype.toString.call(collection) === '[object Object]'){
-
-    }
-    else if (Array.isArray(collection)) {
+    if (Array.isArray(collection)) {
        _.each(collection,function(item){
         temp.push(iterator(item));
       });
        temp.sort();
-       _.each(temp,function(item){
-         
+       if(type(collection[0]) === 'Object' || type(collection[0]) === "String"){
+        _.each(temp,function(item,index){
          //Works for functions
           _.each(collection,function(obj){
             for (var prop in obj){
@@ -588,11 +585,12 @@ _.reduce = function(collection, iterator, accumulator) {
               }
             }
           });
-
-       });
+        });
+       }
+       else{
+        return temp;
+       }
     }
-
-    
     return results;
 
   };
