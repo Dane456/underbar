@@ -570,7 +570,10 @@ _.reduce = function(collection, iterator, accumulator) {
     }
 
     else if(typeof(functionOrKey) === "string"){
-      return Array.prototype[functionOrKey].call(collection);
+      _.each(collection,function(item){
+        results.push(String.prototype[functionOrKey].call(item));
+      });
+      return results;
     }
     
   };
