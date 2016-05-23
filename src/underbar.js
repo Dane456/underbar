@@ -611,7 +611,7 @@ _.reduce = function(collection, iterator, accumulator) {
     var digDeeper = function(element){
         
         if(Array.isArray(element)){
-          element.forEach(function(item){
+          _.each(element,function(item){
             if (Array.isArray(item)){
               digDeeper(item);
             } 
@@ -633,6 +633,34 @@ _.reduce = function(collection, iterator, accumulator) {
   // Takes an arbitrary number of arrays and produces an array that contains
   // every item shared between all the passed-in arrays.
   _.intersection = function() {
+    var refArg = arguments[0];
+    var args = Array.prototype.slice.call(arguments).slice(1);
+    var result = [];
+    var truthObject = {};
+
+
+    //e.g. [1, 2, 3, 4, 5], [5, 2, 10], [3, 2]
+    //Start with first array
+    //[1, 2, 3, 4, 5]
+
+    _.each(refArg, function(itemInRefArray){
+      //sort through all the rest of the arrays
+      //[[5, 2, 10], [3, 2]]
+      _.each(args, function(argArray,index){
+        //Search each array
+        if (_.contains(argArray, itemInRefArray)){
+          truthObject[itemInRefArray] = (truthObject[itemInRefArray] || 0) + 1;
+        }
+      });
+    });
+
+    for (var prop in truthObject){
+      if(truthObject[prop] === args.length){
+        result.push(prop);
+      }
+    }
+    console.log(truthObject);
+    return result;
   };
 
   // Take the difference between one array and a number of other arrays.
@@ -642,7 +670,7 @@ _.reduce = function(collection, iterator, accumulator) {
     var allArgs = _.flatten(args);
     var result = [];
 
-    array.forEach(function(item){
+    _.each(array, function(item){
       if(!_.contains(allArgs,item))
         result.push(item);
     });
