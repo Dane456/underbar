@@ -189,10 +189,6 @@ _.reduce = function(collection, iterator, accumulator) {
 
     if (isArray){
 
-      if (collection.length === 0){
-        return true;
-      }
-
       //Conditions: 1) No starting point(accumulator/noMemo)
       //            2) No iterator function e.g. _.every([2,4,6]), _.every([true,false,true])
 
@@ -269,6 +265,10 @@ _.reduce = function(collection, iterator, accumulator) {
   _.every = function(collection, iterator) {
   // TIP: Try re-using reduce() here.
    
+    if (collection.length === 0){
+      return true;
+    }
+      
     return _.reduce(collection, function(wasFound, item){
             if(iterator !== undefined){
 
@@ -284,6 +284,9 @@ _.reduce = function(collection, iterator, accumulator) {
                 return true;
               }
               else if(collection.length === 1 && Boolean(iterator(wasFound))){
+                return true;
+              }
+              else if(collection.length === 0){
                 return true;
               }
               else {
@@ -562,7 +565,7 @@ _.reduce = function(collection, iterator, accumulator) {
   // If iterator is a string, sort objects by that property with the name
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
-  _.sortBy = function(collection, iterator) {
+   _.sortBy = function(collection, iterator) {
     var temp = [];
     var results = [];
 
@@ -570,14 +573,33 @@ _.reduce = function(collection, iterator, accumulator) {
       return Object.prototype.toString.call(input).slice(8,-1);
     };
 
-    if (Array.isArray(collection)) {
-       _.each(collection,function(item){
+ //   if (Array.isArray(collection)) {
+
+    _.each(collection,function(item){
+      if(type(iterator) === "Function"){
         temp.push(iterator(item));
-      });
-       temp.sort();
-       if(type(collection[0]) === 'Object' || type(collection[0]) === "String"){
-        _.each(temp,function(item,index){
-         //Works for functions
+      }   
+      else if(type(iterator) === "String"){
+        temp.push(item[iterator]);
+      }
+    });
+
+    temp.sort();
+  
+     if(type(collection[0]) === 'Object' || type(collection[0]) === "String"){
+      _.each(temp,function(item,index){
+        if(iterator === 'length'){
+          for(var i = 0;i<collection.length;i++){
+            if(collection[i].length === item){
+              var doesContain = _.contains(results, collection[i]);
+              if(!doesContain){
+                results.push(collection[i]);
+              break;
+              }
+            }
+          }
+        }
+        else{
           _.each(collection,function(obj){
             for (var prop in obj){
               if(obj[prop] === item){
@@ -585,12 +607,13 @@ _.reduce = function(collection, iterator, accumulator) {
               }
             }
           });
-        });
-       }
-       else{
-        return temp;
-       }
-    }
+        }
+      });
+     }
+     else{
+      return temp;
+     }
+
     return results;
 
   };
