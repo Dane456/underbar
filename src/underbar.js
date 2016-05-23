@@ -514,7 +514,7 @@ _.reduce = function(collection, iterator, accumulator) {
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
     //TODO: allow variable amount of arguments
-    setTimeout(func, wait, arguments[2], arguments[3]);
+    setTimeout.apply(this, arguments);
   };
 
 
