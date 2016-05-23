@@ -295,7 +295,7 @@ _.reduce = function(collection, iterator, accumulator) {
             }
             return false;
            });
-};
+  };
 
 
   // Determine whether any of the elements pass a truth test. If no iterator is
@@ -563,6 +563,38 @@ _.reduce = function(collection, iterator, accumulator) {
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
+    var temp = [];
+    var results = [];
+
+    var type = function(input){
+      return Object.prototype.toString.call(input).slice(8,-1);
+    };
+
+    if(Object.prototype.toString.call(collection) === '[object Object]'){
+
+    }
+    else if (Array.isArray(collection)) {
+       _.each(collection,function(item){
+        temp.push(iterator(item));
+      });
+       temp.sort();
+       _.each(temp,function(item){
+         
+         //Works for functions
+          _.each(collection,function(obj){
+            for (var prop in obj){
+              if(obj[prop] === item){
+                results.push(obj);
+              }
+            }
+          });
+
+       });
+    }
+
+    
+    return results;
+
   };
 
   // Zip together two or more arrays with elements of the same index
@@ -607,7 +639,6 @@ _.reduce = function(collection, iterator, accumulator) {
 
     var results = [];
 
-    
     var digDeeper = function(element){
         
         if(Array.isArray(element)){
@@ -618,9 +649,8 @@ _.reduce = function(collection, iterator, accumulator) {
             else{
               results.push(item);
             }
-            
           });
-        }
+        } 
         else{
           results.push(element);
         }
@@ -638,16 +668,8 @@ _.reduce = function(collection, iterator, accumulator) {
     var result = [];
     var truthObject = {};
 
-
-    //e.g. [1, 2, 3, 4, 5], [5, 2, 10], [3, 2]
-    //Start with first array
-    //[1, 2, 3, 4, 5]
-
     _.each(refArg, function(itemInRefArray){
-      //sort through all the rest of the arrays
-      //[[5, 2, 10], [3, 2]]
       _.each(args, function(argArray,index){
-        //Search each array
         if (_.contains(argArray, itemInRefArray)){
           truthObject[itemInRefArray] = (truthObject[itemInRefArray] || 0) + 1;
         }
