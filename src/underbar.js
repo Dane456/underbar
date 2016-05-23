@@ -603,7 +603,31 @@ _.reduce = function(collection, iterator, accumulator) {
   // The new array should contain all elements of the multidimensional array.
   //
   // Hint: Use Array.isArray to check if something is an array
-  _.flatten = function(nestedArray, result) {
+ _.flatten = function(nestedArray, result) {
+
+    var results = [];
+
+    
+    var digDeeper = function(element){
+        
+        if(Array.isArray(element)){
+          element.forEach(function(item){
+            if (Array.isArray(item)){
+              digDeeper(item);
+            } 
+            else{
+              results.push(item);
+            }
+            
+          });
+        }
+        else{
+          results.push(element);
+        }
+    };
+
+    digDeeper(nestedArray);
+    return results;
   };
 
   // Takes an arbitrary number of arrays and produces an array that contains
