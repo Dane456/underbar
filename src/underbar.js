@@ -513,7 +513,7 @@ _.reduce = function(collection, iterator, accumulator) {
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
-    //TODO: allow variable amount of arguments
+
     setTimeout.apply(this, arguments);
   };
 
@@ -557,7 +557,11 @@ _.reduce = function(collection, iterator, accumulator) {
 
   // Calls the method named by functionOrKey on each value in the list.
   // Note: You will need to learn a bit about .apply to complete this.
-  _.invoke = function(collection, functionOrKey, args) {
+  _.invoke = function(collection, functionOrKey, arg) {
+
+    var args = Array.prototype.slice.call(arguments).slice(2);
+
+    return Array.prototype[functionOrKey].call(collection);
 
   };
 
