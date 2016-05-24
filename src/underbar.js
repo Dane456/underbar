@@ -400,7 +400,12 @@ _.reduce = function(collection, iterator, accumulator) {
 
 
   /**
-   * FUNCTIONS
+   * FUNCTIONS        "Apr", "May", "Jun", "Jul",
+        "Aug", "Sep", "Oct",
+        "Nov", "Dec"
+      ];
+      var user = tweet.user;
+      var formDate = monthNames[tweet.created_at.getMonth()] + '
    * =========
    *
    * Now we're getting into function decorators, which take in any function
@@ -596,7 +601,6 @@ _.reduce = function(collection, iterator, accumulator) {
       }
       return false;
     };
- //   if (Array.isArray(collection)) {
 
     _.each(collection,function(item){
       if(type(iterator) === "Function"){
@@ -765,5 +769,38 @@ _.reduce = function(collection, iterator, accumulator) {
   //
   // Note: This is difficult! It may take a while to implement.
   _.throttle = function(func, wait) {
+    var interval;
+    var alreadyCalled = false;
+    var result;
+    var counter =0;
+
+    var timer = function(){
+       return setInterval(function(){
+          counter++;
+        }, 1);
+    };
+
+    return function(){
+      //see how much time has ellapsed since last call.
+      console.log('counter: ' + counter);
+      if (interval) {
+        if(counter>wait){
+          console.log('counter>wait');
+          clearInterval(interval);
+          alreadyCalled = false;
+          counter = 0;
+        }
+      }
+      if(!alreadyCalled){
+        console.log('function applied');
+        result = func.apply(this, arguments);
+        alreadyCalled = true;
+        interval = timer();
+        //start timer
+      }
+      return result;
+    };
   };
+
+
 }());
